@@ -1,0 +1,50 @@
+pipeline{
+    agent any 
+    enviroment {
+        K8S_SERVER = "https://192.168.49.2:8443"
+        K8S_TOKEN = credentials('k8s-token')
+        NAMESPACE="default"
+        REGISTRY = "jazmin0618"
+        IMAGEN_NAME = "react"
+        TAG = "latest"
+        DOCKER_HUB_USER="jazmincarlos@gmail.com"
+        DOCKER_HUB_PASSWORD="jaz123@"
+    }
+    stages {
+        stage('Clonar repositorio'){
+           steps {
+              git branch: 'master', url:' https://github.com/morgadodesarrollador/Autocaravaneando.git'
+           }
+        }
+    }
+    stage('Acciones'){
+        steps{
+            script{
+                sh """
+                echo $K8S_sERVER
+                echo $K8S_TOKEN
+                """
+            }
+        }
+    }
+    stage('Configurar acceso a kubernetes'){
+        steps{
+            script{
+                sh """
+                kubectl config set-cluster k8s --server=$K8S_SERVER --insecure-skip-tls-verify=true
+                kubectl config set-credentials user --token=$K8S_TOKEN --token=$K8S_TOKEN
+                kubectl config set-context context --cluster=k8s-cluster --user=jenkins
+                kubectl config use-context jenkins
+                """
+            }
+        }
+    }
+    stage('verificar kubectl 1'){
+        steps{
+            script{
+                sh 'kubectl version --client'
+                sh 'kubectl get nodes'
+            }
+        }
+    }
+}

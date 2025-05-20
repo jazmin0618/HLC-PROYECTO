@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: autocaravaneando-env
+  namespace: default
+data:
+ CONTEXTO: /home/jazmin/devops/Autocaravaneando
+ AUTOR: jazmincarlos0618
+ TZ: Europe/Madrid
+ PROYECTO: autocaravaneando
+ GITHUB: https://github.com/morgadodesarrollador/Autocaravaneando.git
+ USUARIO: jazmincarlos0618
+ PASSWD: Jaz123@Jaz123
+ HOSTNAME: autocaravaneando
+ PORT_SSH: "45678"
+ PORT_ORIGEN: "8082"

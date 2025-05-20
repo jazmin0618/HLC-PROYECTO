@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumenClain
+metadata:
+  name: auto-pvc
+  namespace: sp-auto
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
