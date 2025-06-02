@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-env-ConfigMap
+  namespace: sp-auto
+data:
+ CONTEXTO: /home/jazmin/devops/Caronte
+ AUTOR: jazmin0618
+ TZ: Europe/Madrid
+ PROYECTO: Autocaravaneando
+ GITHUB: https://github.com/jazmin0618/HLC-PROYECTO.git
+ USUARIO: jazmin0618
+ PASSWD: 
+ HOSTNAME: autocaravaneando
+ PORT_SSH: "45678"
+ PORT_ORIGEN: "8082"

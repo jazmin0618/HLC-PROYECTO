@@ -13,7 +13,7 @@ pipeline{
     stages {
         stage('Clonar repositorio'){
            steps {
-              git branch: 'master', url:' https://github.com/morgadodesarrollador/Autocaravaneando.git'
+              git branch: 'master', url:'https://github.com/jazmin0618/HLC-PROYECTO.git'
            }
         }
     }
