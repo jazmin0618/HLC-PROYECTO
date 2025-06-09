@@ -44,7 +44,6 @@ pipeline {
                     kubectl config set-context jenkins --cluster=k8s-cluster --user=jenkins --namespace=$NAMESPACE
                     kubectl config use-context jenkins
                     """
-                }
              }
           }
         }
