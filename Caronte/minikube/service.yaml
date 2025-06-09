@@ -9,4 +9,4 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30085  # Rango válido: 30000-32767
+      nodePort: 30090  # Rango válido: 30000-32767
