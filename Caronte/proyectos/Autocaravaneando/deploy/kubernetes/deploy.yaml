@@ -6,7 +6,7 @@ metadata:
   labels:
     app: my-app
 spec:
-  replicas: 1  # Número de réplicas
+  replicas: 1
   selector:
     matchLabels:
       app: my-app
@@ -16,19 +16,17 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: react-container
-        image: morgadoberruezo/react:latest
-        command: ["bash", "-c", "tail -f /dev/null"]
-        # image: morgadoberruezo/react:latest
-        envFrom:
-        - configMapRef:
-            name: app-env-config
-        ports:
-        - containerPort: 80
-        volumenMounts:
+        - name: react-container
+          image: morgadoberruezo/react:latest
+          command: ["bash", "-c", "tail -f /dev/null"]
+          envFrom:
+            - configMapRef:
+                name: app-env-config
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+      volumes:
         - name: app-volume
-          mountPath: /app
-        volumes:
-        - name: auto-logs
-        
-        env:
+          emptyDir: {}
