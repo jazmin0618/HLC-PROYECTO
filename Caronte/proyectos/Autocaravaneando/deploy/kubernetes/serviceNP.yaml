@@ -8,11 +8,10 @@ metadata:
 spec:
   selector:
     app: my-app
-    type: NodePort
+  type: NodePort
   ports:
-  - name: http-port
-    protocol: TCP
-    port: 80
-    targetPort: 80
-    nodePort: 30080 # Puerto externo para acceder al servicio
-  
+    - name: http-port
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
