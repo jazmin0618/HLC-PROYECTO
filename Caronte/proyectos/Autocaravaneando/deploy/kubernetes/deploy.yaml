@@ -12,7 +12,7 @@ spec:
       app: my-app
   template:
     metadata:
-      labels:
+      labels: 
         app: my-app
     spec:
       containers:
