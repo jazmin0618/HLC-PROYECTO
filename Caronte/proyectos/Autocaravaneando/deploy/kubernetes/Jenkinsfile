@@ -62,8 +62,8 @@ pipeline {
                         sh "kubectl apply -f deploy/kubernetes/configMap.yaml"
                         sh "kubectl apply -f deploy/kubernetes/pvc.yaml"
                         sh "kubectl delete deploy react-deployment -n sp-auto" */
-                        sh "kubectl apply -f deploy/kubernetes/deploy.yaml"
-                        sh "kubectl apply -f deploy/kubernetes/serviceNP.yaml"
+                        sh "kubectl apply -f Caronte/proyectos/Autocaravaneando/deploy/kubernetes/deploy.yaml"
+                        sh "kubectl apply -f Caronte/proyectos/Autocaravaneando/deploy/kubernetes/serviceNP.yaml"
                     }
             }
         }
