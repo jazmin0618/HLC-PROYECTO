@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo 'Cloning repository from GitHub...'
-                # This clones your repository into the Jenkins workspace for this job
+                //This clones your repository into the Jenkins workspace for this job
                 git branch: 'master', url: 'https://github.com/jazmin0618/HLC-PROYECTO.git'
             }
         }
