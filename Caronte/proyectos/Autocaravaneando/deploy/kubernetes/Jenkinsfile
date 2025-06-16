@@ -1,80 +1,54 @@
 pipeline {
-    agent any
+    agent any 
+
     environment {
-        K8S_SERVER = "https://192.168.49.2:8443"
-        K8S_TOKEN = credentials('k8s-token')
-        NAMESPACE="default"
-        DOCKER_IMAGE = ""
-        DOCKER_TAG = "latest"   
-        DOCKER_CREDENTIALS_ID = "docker-hub"  
-        REPO="https://github.com/jazmin0618/HLC-PROYECTO.git"
+        # Path where NGINX is serving files on your server
+        # Make sure this matches your NGINX config's 'root' directive
+        DEPLOY_DIR = '/var/www/misitio'
     }
+
     stages {
-        stage('Clonar repositorio git Autocaravaneando desde Github ok') {
+        stage('Checkout Code') {
             steps {
+                echo 'Cloning repository from GitHub...'
+                # This clones your repository into the Jenkins workspace for this job
                 git branch: 'master', url: 'https://github.com/jazmin0618/HLC-PROYECTO.git'
             }
         }
-        // stage('Docker Build & Push') { 
-        //     steps {
-        //         withCredentials([usernamePassword(
-        //             credentialsId: "${DOCKER_CREDENTIALS_ID}",
-        //             usernameVariable: 'DOCKER_USER',
-        //             passwordVariable: 'DOCKER_PASS'
-        //         )]) {
-        //             script {
-        //                 sh """
-        //                     docker ps
-        //                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-        //                     docker build -t $DOCKER_IMAGE:$DOCKER_TAG -f ./deploy/Dockerfile
-        //                     docker push $DOCKER_IMAGE:$DOCKER_TAG
-        //                     docker logout
-        //                 """
-        //             }
-        //         }   
-        //     }
-        // }
-        stage('Configurar acceso a Kubernetes') {
-            steps { //conexion jenkins a kubernetes
-                script {
-                    sh """
-                    rm -f $HOME/.kube/config
-                    kubectl config set-cluster k8s-cluster --server=$K8S_SERVER --insecure-skip-tls-verify=true
-                    kubectl config set-credentials jenkins --token=$K8S_TOKEN
-                    kubectl config set-context jenkins --cluster=k8s-cluster --user=jenkins --namespace=$NAMESPACE
-                    kubectl config use-context jenkins
-                    """
-             }
-          }
-        }
 
-        stage('Verificar kubectl') {
+        stage('Deploy Website to NGINX') {
             steps {
-                sh 'kubectl version --client'
-                // sh 'kubectl config current-context' // Verifica que está usando el contexto correcto
-                sh 'kubectl get nodes' // Confirma conexión con el clúster
-            }
-        }
-        stage('Deploy en Kubernetes') {
-            steps {
+                echo 'Deploying website files...'
                 script {
-                    /* sh "kubectl apply -f deploy/kubernetes/namespace.yaml"
-                        sh "kubectl apply -f deploy/kubernetes/configMap.yaml"
-                        sh "kubectl apply -f deploy/kubernetes/pvc.yaml"
-                        sh "kubectl delete deploy react-deployment -n sp-auto" */
-                        sh "kubectl apply -f Caronte/proyectos/Autocaravaneando/deploy/kubernetes/deploy.yaml"
-                        sh "kubectl apply -f Caronte/proyectos/Autocaravaneando/deploy/kubernetes/serviceNP.yaml"
-                    }
+                    // Get the path to the current workspace (where Git cloned the repo)
+                    def workspacePath = pwd()
+
+                    // IMPORTANT: Clean previous deployment (be careful with rm -rf!)
+                    // This assumes /var/www/misitio is exclusively for this website
+                    sh "sudo rm -rf ${env.DEPLOY_DIR}/*"
+
+                    // Copy all files from the Jenkins workspace to the NGINX serving directory
+                    // Adjust this if your actual website files are in a subfolder (e.g., 'dist')
+                    // For example: sh "sudo cp -r ${workspacePath}/dist/* ${env.DEPLOY_DIR}/"
+                    sh "sudo cp -r ${workspacePath}/* ${env.DEPLOY_DIR}/"
+
+                    // Set correct permissions for NGINX to read the files
+                    // www-data is the common user/group for web servers on Debian/Ubuntu
+                    sh "sudo chown -R www-data:www-data ${env.DEPLOY_DIR}"
+                    sh "sudo chmod -R 755 ${env.DEPLOY_DIR}"
+
+                    echo 'Website deployment complete!'
+                }
             }
         }
     }
-    
+
     post {
         success {
-            echo "Despliegue completado con éxito"
+            echo "Pipeline finished successfully. Website should be updated."
         }
         failure {
-            echo "Error en el despliegue"
+            echo "Pipeline failed. Check build logs for errors."
         }
     }
 }
