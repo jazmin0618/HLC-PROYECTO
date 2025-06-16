@@ -26,7 +26,7 @@ pipeline {
                     // IMPORTANT: Clean previous deployment (be careful with rm -rf!)
                     // This assumes /var/www/misitio is exclusively for this website
                     sh "sudo rm -rf ${env.DEPLOY_DIR}/*"
-
+                    sh "sudo mkdir -p ${env.DEPLOY_DIR}"
                     // Copy all files from the Jenkins workspace to the NGINX serving directory
                     // Adjust this if your actual website files are in a subfolder (e.g., 'dist')
                     // For example: sh "sudo cp -r ${workspacePath}/dist/* ${env.DEPLOY_DIR}/"
