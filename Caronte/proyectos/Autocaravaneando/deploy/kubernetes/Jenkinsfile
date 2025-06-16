@@ -2,8 +2,8 @@ pipeline {
     agent any 
 
     environment {
-        # Path where NGINX is serving files on your server
-        # Make sure this matches your NGINX config's 'root' directive
+        //Path where NGINX is serving files on your server
+        //Make sure this matches your NGINX config's 'root' directive
         DEPLOY_DIR = '/var/www/misitio'
     }
 
