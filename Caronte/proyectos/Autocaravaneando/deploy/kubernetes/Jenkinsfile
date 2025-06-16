@@ -4,7 +4,7 @@ pipeline {
     environment {
         //Path where NGINX is serving files on your server
         //Make sure this matches your NGINX config's 'root' directive
-        DEPLOY_DIR = '/var/www/misitio'
+        DEPLOY_DIR = '/var/www/auto.jazmincarlos.eu'
     }
 
     stages {
