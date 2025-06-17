@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DEPLOY_DIR = '/var/www/auto.jazmincarlos.eu'
-        PROJECT_REPO = 'https://github.com/domingoLopezOller/iawasir2.git'
+        PROJECT_REPO = 'https://github.com/jazmin0618/auto.git'
         PROJECT_DIR = 'reactasir'
     }
 
@@ -11,7 +11,7 @@ pipeline {
         stage('Clonar Proyecto') {
             steps {
                 echo 'Clonando proyecto de React desde iawasir2.git'
-                sh 'rm -rf iawasir2'
+                sh 'rm -rf auto'
                 sh "git clone ${env.PROJECT_REPO}"
             }
         }
@@ -27,7 +27,7 @@ pipeline {
                 }
             }
         }
-
+    
         stage('Deploy a NGINX') {
             steps {
                 echo '🚀 Desplegando contenido a /var/www...'
