@@ -10,9 +10,9 @@ pipeline {
     stages {
         stage('Clonar Proyecto') {
             steps {
-                echo 'Clonando proyecto de React desde iawasir2.git'
-                sh 'rm -rf auto'
-                sh "git clone ${env.PROJECT_REPO}"
+                echo 'Clonando auto.git'
+                sh 'rm -rf auto || true'
+                sh "git clone ${env.WEB_REPO}"
             }
         }
 
