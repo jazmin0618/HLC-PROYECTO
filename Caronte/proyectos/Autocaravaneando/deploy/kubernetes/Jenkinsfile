@@ -1,43 +1,42 @@
 pipeline {
-    agent any 
+    agent any
 
     environment {
-        //Path where NGINX is serving files on your server
-        //Make sure this matches your NGINX config's 'root' directive
         DEPLOY_DIR = '/var/www/auto.jazmincarlos.eu'
+        PROJECT_REPO = 'https://github.com/domingoLopezOller/iawasir2.git'
+        PROJECT_DIR = 'reactasir'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Clonar Proyecto') {
             steps {
-                echo 'Cloning repository from GitHub...'
-                //This clones your repository into the Jenkins workspace for this job
-                git branch: 'master', url: 'https://github.com/jazmin0618/HLC-PROYECTO.git'
+                echo 'Clonando proyecto de React desde iawasir2.git'
+                sh 'rm -rf iawasir2'
+                sh "git clone ${env.PROJECT_REPO}"
             }
         }
 
-        stage('Deploy Website to NGINX') {
+        stage('Instalar y compilar React') {
             steps {
-                echo 'Deploying website files...'
-                script {
-                    // Get the path to the current workspace (where Git cloned the repo)
-                    def workspacePath = pwd()
+                dir("iawasir2/${env.PROJECT_DIR}") {
+                    echo '📥 Instalando dependencias...'
+                    sh 'npm install'
 
-                    // IMPORTANT: Clean previous deployment (be careful with rm -rf!)
-                    // This assumes /var/www/misitio is exclusively for this website
+                    echo '🔨 Compilando con Vite (npm run build)...'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Deploy a NGINX') {
+            steps {
+                echo '🚀 Desplegando contenido a /var/www...'
+                script {
                     sh "sudo rm -rf ${env.DEPLOY_DIR}/*"
                     sh "sudo mkdir -p ${env.DEPLOY_DIR}"
-                    // Copy all files from the Jenkins workspace to the NGINX serving directory
-                    // Adjust this if your actual website files are in a subfolder (e.g., 'dist')
-                    // For example: sh "sudo cp -r ${workspacePath}/dist/* ${env.DEPLOY_DIR}/"
-                    sh "sudo cp -r ${workspacePath}/* ${env.DEPLOY_DIR}/"
-
-                    // Set correct permissions for NGINX to read the files
-                    // www-data is the common user/group for web servers on Debian/Ubuntu
+                    sh "sudo cp -r iawasir2/${env.PROJECT_DIR}/dist/* ${env.DEPLOY_DIR}/"
                     sh "sudo chown -R www-data:www-data ${env.DEPLOY_DIR}"
                     sh "sudo chmod -R 755 ${env.DEPLOY_DIR}"
-
-                    echo 'Website deployment complete!'
                 }
             }
         }
@@ -45,10 +44,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline finished successfully. Website should be updated."
+            echo '✅ ¡Sitio desplegado correctamente!'
         }
         failure {
-            echo "Pipeline failed. Check build logs for errors."
+            echo '❌ Falló el pipeline. Revisa los logs.'
         }
     }
 }
