@@ -2,52 +2,46 @@ pipeline {
     agent any
 
     environment {
+        // ¡Asegúrate de que estas variables estén bien escritas!
         DEPLOY_DIR = '/var/www/auto.jazmincarlos.eu'
-        PROJECT_REPO = 'https://github.com/jazmin0618/auto.git'
-        PROJECT_DIR = 'reactasir'
+        WEB_REPO = 'https://github.com/jazmin0618/auto.git'  // URL directa, sin 'git clone'
+        PROJECT_DIR = 'reactasir'  // Ajusta esto si tu estructura es diferente
     }
 
     stages {
-        stage('Clonar Proyecto') {
+        stage('Clonar Proyecto Web') {
             steps {
-                echo 'Clonando auto.git'
-                sh 'rm -rf auto || true'
-                sh "git clone ${env.WEB_REPO}"
+                echo "Clonando repo web: ${env.WEB_REPO}"
+                sh 'rm -rf auto || true'  // Elimina el directorio si existe
+                sh "git clone ${env.WEB_REPO}"  // Usa la variable de entorno
             }
         }
 
-        stage('Instalar y compilar React') {
+        stage('Instalar y Compilar') {
             steps {
-                dir("iawasir2/${env.PROJECT_DIR}") {
-                    echo '📥 Instalando dependencias...'
+                dir("auto/${env.PROJECT_DIR}") {
                     sh 'npm install'
-
-                    echo '🔨 Compilando con Vite (npm run build)...'
                     sh 'npm run build'
                 }
             }
         }
-    
-        stage('Deploy a NGINX') {
+
+        stage('Desplegar en NGINX') {
             steps {
-                echo '🚀 Desplegando contenido a /var/www...'
-                script {
-                    sh "sudo rm -rf ${env.DEPLOY_DIR}/*"
-                    sh "sudo mkdir -p ${env.DEPLOY_DIR}"
-                    sh "sudo cp -r iawasir2/${env.PROJECT_DIR}/dist/* ${env.DEPLOY_DIR}/"
-                    sh "sudo chown -R www-data:www-data ${env.DEPLOY_DIR}"
-                    sh "sudo chmod -R 755 ${env.DEPLOY_DIR}"
-                }
+                sh """
+                    sudo rm -rf ${env.DEPLOY_DIR}/*
+                    sudo mkdir -p ${env.DEPLOY_DIR}
+                    sudo cp -r auto/${env.PROJECT_DIR}/dist/* ${env.DEPLOY_DIR}/
+                    sudo chown -R www-data:www-data ${env.DEPLOY_DIR}
+                """
             }
         }
     }
 
     post {
-        success {
-            echo '✅ ¡Sitio desplegado correctamente!'
-        }
         failure {
-            echo '❌ Falló el pipeline. Revisa los logs.'
+            echo '❌ Error: Revisa los logs para ver qué variable falló.'
+            sh 'printenv'  // Esto imprimirá todas las variables para debuggear
         }
     }
 }
